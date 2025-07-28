@@ -22,15 +22,21 @@ class DataIngestion:
 
             file_id = dataset_url.split("/")[-2]
             prefix = "https://drive.google.com/uc?export=download&id="
-            gdown.download(prefix+file_id, zip_download_dir)
+            if os.path.exists(self.config.local_data_file):
+                logger.info("File %s already exists, skipping download.",self.config.local_data_file)
+            else:
+                logger.info("Downloading dataset from %s into file %s",dataset_url,zip_download_dir)
+                gdown.download(prefix+file_id, zip_download_dir)
 
-            logger.info("Downloading dataset from %s into file %s",dataset_url,zip_download_dir)
-        
         except Exception as e:
             raise e
-    
+
     def extract_zip_file(self):
         unzip_path = self.config.unzip_dir
         os.makedirs(unzip_path, exist_ok=True)
-        with zipfile.ZipFile(self.config.local_data_file, 'r') as zip_ref:
-            zip_ref.extractall(unzip_path)
+        if os.path.exists(r"artifacts\data_ingestion\Kidney_dataset"):
+            logger.info("Dataset already unzipped!")
+        else:
+            logger.info("Unzipping data.zip")
+            with zipfile.ZipFile(self.config.local_data_file, 'r') as zip_ref:
+                zip_ref.extractall(unzip_path)
