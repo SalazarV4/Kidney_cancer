@@ -2,7 +2,7 @@ from kidney_cancer.config.configuration import ConfigurationManager
 from kidney_cancer.components.base_model import PrepareBaseModel
 from kidney_cancer import logger
 
-STAGE_NAME = "Prepare base model"
+STAGE_NAME = "Base Model"
 
 class BaseModelTrainingPipeline:
     def __init__(self):
@@ -20,10 +20,10 @@ class BaseModelTrainingPipeline:
 if __name__ == '__main__':
     try:
         logger.info("*"*10)
-        logger.info(">>>>>>>> %s started <<<<<<<<", STAGE_NAME)
+        logger.info(">>>>>>>> Preparing %s <<<<<<<<", STAGE_NAME)
         obj = BaseModelTrainingPipeline()
         obj.main()
-        logger.info(">>>>>>>> %s started <<<<<<<<\n\n", STAGE_NAME)
+        logger.info(">>>>>>>> %s Created <<<<<<<<\n\n", STAGE_NAME)
     except Exception as e:
         logger.exception(e)
         raise e

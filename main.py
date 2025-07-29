@@ -1,25 +1,37 @@
 from kidney_cancer import logger
 from kidney_cancer.pipeline.data_ingestion import DataIngestionTrainingPipeline
 from kidney_cancer.pipeline.base_model import BaseModelTrainingPipeline
+from kidney_cancer.pipeline.model_training import ModelTrainingPipeline
 
-STAGE_NAME = "Data Ingestion"
+STAGE_NAME_1 = "Data Ingestion"
 try:
-    logger.info(">>>>>>> Initializing %s <<<<<<<", STAGE_NAME)
+    logger.info(">>>>>>> Initializing %s <<<<<<<", STAGE_NAME_1)
     obj = DataIngestionTrainingPipeline()
     obj.main()
-    logger.info(">>>>>>> %s Completed <<<<<<<", STAGE_NAME)
+    logger.info(">>>>>>> %s Completed <<<<<<<", STAGE_NAME_1)
 except Exception as e:
     logger.exception(e)
     raise e
 
 
-STAGE_NAME = "Base Model"
+STAGE_NAME_2 = "Base Model"
 
 try:
-    logger.info(">>>>>>>> Preparing %s <<<<<<<<", STAGE_NAME)
+    logger.info(">>>>>>>> Preparing %s <<<<<<<<", STAGE_NAME_2)
     base_model = BaseModelTrainingPipeline()
     base_model.main()
-    logger.info(">>>>>>>> %s Succesfully Prepared <<<<<<<<", STAGE_NAME)
+    logger.info(">>>>>>>> %s Succesfully Prepared <<<<<<<<", STAGE_NAME_2)
+except Exception as e:
+    logger.exception(e)
+    raise e
+
+
+STAGE_NAME_3 = "Training"
+try:
+    logger.info(">>>>>>>> %s Started <<<<<<<<", STAGE_NAME_3)
+    obj = ModelTrainingPipeline()
+    obj.main()
+    logger.info(">>>>>>>> %s Finished <<<<<<<<\n\n", STAGE_NAME_3)
 except Exception as e:
     logger.exception(e)
     raise e

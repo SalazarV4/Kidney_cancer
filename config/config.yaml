@@ -3,15 +3,15 @@ artifacts_root: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  source_url: https://drive.google.com/file/d/1aMYYXIjTlXadTDs1TlDYh2pMY0xLmeTd/view?usp=sharing
+  source_url: https://drive.google.com/file/d/1M6xaqJIq7Y719a7zBgTfUeD1ezQNQPQU/view?usp=sharing
   local_data_file: artifacts/data_ingestion/data.zip
   unzip_dir: artifacts/data_ingestion
 
-prepare_base_model:
+base_model:
   root_dir: artifacts/base_model
   base_model_path: artifacts/base_model/base_model.pth
   updated_base_model_path: artifacts/base_model/base_model_updated.pth
 
 model_training:
-  root_dir:artifacts/model_training
-  trained_model_path:artifacts/model_training/model.pth
+  root_dir: artifacts/model_training
+  trained_model_path: artifacts/model_training/model.pth
