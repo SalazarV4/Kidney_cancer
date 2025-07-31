@@ -1,10 +1,10 @@
+from argparse import ArgumentParser
+import dagshub
 from kidney_cancer import logger
 from kidney_cancer.pipeline.data_ingestion import DataIngestionTrainingPipeline
 from kidney_cancer.pipeline.base_model import BaseModelTrainingPipeline
 from kidney_cancer.pipeline.model_training import ModelTrainingPipeline
 from kidney_cancer.pipeline.model_evaluation import ModelEvaluationPipeline
-from argparse import ArgumentParser
-import dagshub
 
 parser = ArgumentParser(description="Main file for Kidney Cancer detector")
 parser.add_argument("-t",
