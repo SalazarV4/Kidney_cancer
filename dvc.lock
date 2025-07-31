@@ -1,0 +1,113 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src\kidney_cancer\pipeline\data_ingestion.py
+    deps:
+    - path: config\config.yaml
+      hash: md5
+      md5: eeffcfbfad07ee2f9305338d9a721b5b
+      size: 587
+    - path: src\kidney_cancer\pipeline\data_ingestion.py
+      hash: md5
+      md5: a4b2a6e9f3771ce6fd6e80234295766c
+      size: 911
+    outs:
+    - path: artifacts\data_ingestion\Kidney_dataset
+      hash: md5
+      md5: ad13002770333021d7883f201a088df5.dir
+      size: 8983492
+      nfiles: 56
+  prepare_base_model:
+    cmd: python src\kidney_cancer\pipeline\base_model.py
+    deps:
+    - path: config\config.yaml
+      hash: md5
+      md5: eeffcfbfad07ee2f9305338d9a721b5b
+      size: 587
+    - path: src\kidney_cancer\pipeline\base_model.py
+      hash: md5
+      md5: c03929d38be80197bdd6ba3b5d44a006
+      size: 925
+    params:
+      params.yaml:
+        CLASSES: 2
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        INCLUDE_TOP: false
+        LEARNING_RATE: 0.001
+        WEIGHTS: IMAGENET1K_V1
+    outs:
+    - path: artifacts\base_model
+      hash: md5
+      md5: 82b12911a4c19c2a6937f2c614fdace9.dir
+      size: 1090548250
+      nfiles: 2
+  training:
+    cmd: python src\kidney_cancer\pipeline\model_training.py
+    deps:
+    - path: artifacts\base_model
+      hash: md5
+      md5: 82b12911a4c19c2a6937f2c614fdace9.dir
+      size: 1090548250
+      nfiles: 2
+    - path: artifacts\data_ingestion\Kidney_dataset
+      hash: md5
+      md5: ad13002770333021d7883f201a088df5.dir
+      size: 8983492
+      nfiles: 56
+    - path: config\config.yaml
+      hash: md5
+      md5: eeffcfbfad07ee2f9305338d9a721b5b
+      size: 587
+    - path: src\kidney_cancer\pipeline\model_training.py
+      hash: md5
+      md5: 5f4c556efea0fab4ffacd8ea80039a62
+      size: 921
+    params:
+      params.yaml:
+        AUGMENTATION: false
+        BATCH_SIZE: 16
+        EPOCHS: 1
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: artifacts\model_training\model.pth
+      hash: md5
+      md5: e29c1c7f3dfd65b07461d5b84b0534b2
+      size: 537094071
+  evaluation:
+    cmd: python src\kidney_cancer\pipeline\model_evaluation.py
+    deps:
+    - path: artifacts\data_ingestion\Kidney_dataset
+      hash: md5
+      md5: ad13002770333021d7883f201a088df5.dir
+      size: 8983492
+      nfiles: 56
+    - path: artifacts\model_training\model.pth
+      hash: md5
+      md5: e29c1c7f3dfd65b07461d5b84b0534b2
+      size: 537094071
+    - path: config\config.yaml
+      hash: md5
+      md5: eeffcfbfad07ee2f9305338d9a721b5b
+      size: 587
+    - path: src\kidney_cancer\pipeline\model_evaluation.py
+      hash: md5
+      md5: 58536a0ac9737800b21a6eaba6101a37
+      size: 818
+    params:
+      params.yaml:
+        BATCH_SIZE: 16
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: scores.json
+      hash: md5
+      md5: c132d0f999354d0c4220fe1c69edb9ec
+      size: 58

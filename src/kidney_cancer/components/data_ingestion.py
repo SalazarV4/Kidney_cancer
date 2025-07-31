@@ -9,7 +9,7 @@ class DataIngestion:
     def __init__(self, config: DataIngestionConfig):
         self.config = config
 
-    
+
     def download_file(self)-> str:
         """
         Fetch data from the url
@@ -22,11 +22,11 @@ class DataIngestion:
 
             file_id = dataset_url.split("/")[-2]
             prefix = "https://drive.google.com/uc?export=download&id="
-            if os.path.exists(self.config.local_data_file):
-                logger.info("File %s already exists, skipping download.",self.config.local_data_file)
-            else:
-                logger.info("Downloading dataset from %s into file %s",dataset_url,zip_download_dir)
-                gdown.download(prefix+file_id, zip_download_dir)
+
+            logger.info("Downloading dataset from %s into file %s",
+                        dataset_url,
+                        zip_download_dir)
+            gdown.download(prefix+file_id, zip_download_dir)
 
         except Exception as e:
             raise e

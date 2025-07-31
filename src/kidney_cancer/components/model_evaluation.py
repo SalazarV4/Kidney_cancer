@@ -81,9 +81,9 @@ class Evaluation:
                  "accuracy": self.score[1]}
             )
 
-            if tracking_url_type_store != "file":
-                mlflow.pytorch.log_model(pytorch_model=self.model,
-                                         artifact_path="model",
-                                         registered_model_name="VGG16")
-            else:
-                mlflow.pytorch.log_model(self.model, "model")
+           # if tracking_url_type_store != "file":
+           #     mlflow.pytorch.log_model(pytorch_model=self.model,
+           #                              artifact_path="model",
+           #                              registered_model_name="VGG16")
+           # else:
+           #     mlflow.pytorch.log_model(self.model, "model")

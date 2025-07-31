@@ -15,6 +15,8 @@ class ModelTrainingPipeline:
         training.get_base_model()
         training.train_val_loader()
         training.train()
+        training.log_into_mlflow()
+        training.copy_model()
 
 
 if __name__ == "__main__":

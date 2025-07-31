@@ -1,4 +1,8 @@
+import os
+import shutil
 from pathlib import Path
+from urllib.parse import urlparse
+from tqdm import tqdm
 from kidney_cancer import logger
 from kidney_cancer.config.configuration import ConfigurationManager
 from kidney_cancer.entity.config_entity import TrainingConfig
@@ -8,6 +12,7 @@ import torchvision
 from torchvision.transforms import v2
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
+import mlflow
 
 class ModelTraining:
     def __init__(self, config: TrainingConfig):
@@ -47,7 +52,7 @@ class ModelTraining:
     
     @staticmethod
     def save_model(path: Path, model: torchvision.models):
-        model.save(path)
+        torch.save(obj=model,f=path)
 
     def train(self):
         self.loss_fn = nn.CrossEntropyLoss()
@@ -59,14 +64,14 @@ class ModelTraining:
 
             train_loss, train_acc = 0, 0
             logger.info("Training Started")
-            for batch, (X, y) in enumerate(self.train_dataloader):
+            for batch, (X, y) in tqdm(enumerate(self.train_dataloader)):
 
                 X, y = X.to(self.device), y.to(self.device)
 
                 y_pred = self.model(X)
 
                 loss = self.loss_fn(y_pred, y)
-                train_loss += loss.item() 
+                train_loss += loss.item()
 
                 self.optim.zero_grad()
 
@@ -82,13 +87,13 @@ class ModelTraining:
 
                 if batch + 1 %10 == 0:
                     logger.info("Training loss: %s | Train Accuracy: %s",train_loss,train_acc)
-
-            self.model.eval() 
+            logger.info("Evaluating model..")
+            self.model.eval()
 
             val_loss, val_acc = 0, 0
 
             with torch.inference_mode():
-                for batch, (X_val, y_val) in enumerate(self.val_dataloader):
+                for batch, (X_val, y_val) in tqdm(enumerate(self.val_dataloader)):
                     X_val, y_val = X_val.to(self.device), y_val.to(self.device)
 
                     val_pred_logits = self.model(X_val)
@@ -112,4 +117,28 @@ class ModelTraining:
             self.save_model(self.config.trained_model_path, self.model)
             logger.info("Model Saved at %s",self.config.trained_model_path)
 
-            return train_loss, train_acc, val_loss, val_acc
+            self.score = (train_loss, train_acc, val_loss, val_acc)
+
+    def log_into_mlflow(self):
+        mlflow.set_registry_uri(self.config.mlflow_uri)
+        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+
+        with mlflow.start_run():
+            mlflow.log_params(self.config.all_params)
+            mlflow.log_metrics(
+                {"train_loss": self.score[0],
+                 "train_accuracy": self.score[1],
+                 "val_loss": self.score[2],
+                 "val_accuracy":self.score[3]}
+            )
+
+            # if tracking_url_type_store != "file":
+            #     mlflow.pytorch.log_model(pytorch_model=self.model,
+            #                              artifact_path="model",
+            #                              registered_model_name="VGG16")
+            # else:
+            #     mlflow.pytorch.log_model(self.model, "model")
+
+    def copy_model(self):
+        os.makedirs(self.config.model_dir,exist_ok=True)
+        shutil.copyfile(self.config.trained_model_path, self.config.model_dir / "model.pth")
