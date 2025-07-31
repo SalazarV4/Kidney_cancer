@@ -9,7 +9,7 @@ class PredictionPipeline:
         self.filename = filename
 
     def predict(self):
-        model = torch.load(f="artifacts/model_training/model.pth", weights_only=False)
+        model = torch.load(f="model/model.pth", weights_only=False)
 
         image = io.read_image(self.filename)
 
