@@ -2,7 +2,10 @@ from pathlib import Path
 import os
 from kidney_cancer.constants import  CONFIG_FILE_PATH, PARAMS_FILE_PATH
 from kidney_cancer.utils.common import read_yaml, create_directories
-from kidney_cancer.entity.config_entity import DataIngestionConfig, BaseModelConfig, TrainingConfig
+from kidney_cancer.entity.config_entity import (DataIngestionConfig,
+                                                BaseModelConfig,
+                                                TrainingConfig,
+                                                EvaluationConfig)
 
 class ConfigurationManager:
     def __init__(
@@ -67,3 +70,15 @@ class ConfigurationManager:
         )
 
         return training_config
+
+    def get_evaluation_config(self) -> EvaluationConfig:
+        evaluation_config= EvaluationConfig(
+            path_of_model=Path("artifacts/model_training/model.pth"),
+            training_data=Path("artifacts/data_ingestion/Kidney_dataset"),
+            mlflow_uri="https://dagshub.com/SalazarV4/Kidney_cancer.mlflow",
+            all_params=self.params,
+            params_image_size=self.params.IMAGE_SIZE,
+            params_batch_size=self.params.BATCH_SIZE
+        )
+
+        return evaluation_config

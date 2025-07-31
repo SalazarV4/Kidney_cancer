@@ -1,0 +1,48 @@
+stages:
+  data_ingestion:
+    cmd: python src\kidney_cancer\pipeline\data_ingestion.py
+    deps:
+    - config\config.yaml
+    - src\kidney_cancer\pipeline\data_ingestion.py
+    outs:
+    - artifacts\data_ingestion\Kidney_dataset
+  prepare_base_model:
+    cmd: python src\kidney_cancer\pipeline\base_model.py
+    deps:
+    - config\config.yaml
+    - src\kidney_cancer\pipeline\base_model.py
+    params:
+    - CLASSES
+    - IMAGE_SIZE
+    - INCLUDE_TOP
+    - LEARNING_RATE
+    - WEIGHTS
+    outs:
+    - artifacts\base_model
+  training:
+    cmd: python src\kidney_cancer\pipeline\model_training.py
+    deps:
+    - artifacts\base_model
+    - artifacts\data_ingestion\Kidney_dataset
+    - config\config.yaml
+    - src\kidney_cancer\pipeline\model_training.py
+    params:
+    - AUGMENTATION
+    - BATCH_SIZE
+    - EPOCHS
+    - IMAGE_SIZE
+    outs:
+    - artifacts\model_training\model.pth
+  evaluation:
+    cmd: python src\kidney_cancer\pipeline\model_evaluation.py
+    deps:
+    - artifacts\data_ingestion\Kidney_dataset
+    - artifacts\model_training\model.pth
+    - config\config.yaml
+    - src\kidney_cancer\pipeline\model_evaluation.py
+    params:
+    - BATCH_SIZE
+    - IMAGE_SIZE
+    metrics:
+    - scores.json:
+        cache: false

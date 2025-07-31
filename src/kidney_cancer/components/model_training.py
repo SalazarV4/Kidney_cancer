@@ -85,31 +85,31 @@ class ModelTraining:
 
             self.model.eval() 
 
-            test_loss, test_acc = 0, 0
+            val_loss, val_acc = 0, 0
 
             with torch.inference_mode():
                 for batch, (X_val, y_val) in enumerate(self.val_dataloader):
                     X_val, y_val = X_val.to(self.device), y_val.to(self.device)
 
-                    test_pred_logits = self.model(X_val)
+                    val_pred_logits = self.model(X_val)
 
-                    loss = self.loss_fn(test_pred_logits, y_val)
-                    test_loss += loss.item()
+                    loss = self.loss_fn(val_pred_logits, y_val)
+                    val_loss += loss.item()
 
-                    test_pred_labels = test_pred_logits.argmax(dim=1)
+                    val_pred_labels = val_pred_logits.argmax(dim=1)
 
-                    test_acc += ((test_pred_labels == y_val).sum().item()/len(test_pred_labels))
+                    val_acc += ((val_pred_labels == y_val).sum().item()/len(val_pred_labels))
 
 
-            test_loss = test_loss / len(self.val_dataloader)
-            test_acc = test_acc / len(self.val_dataloader)
-            logger.info("Training Loss: %s | Train Accuracy: %s | Test Loss: %s | Test Accuracy: %s",
+            val_loss = val_loss / len(self.val_dataloader)
+            val_acc = val_acc / len(self.val_dataloader)
+            logger.info("Training Loss: %s | Train Accuracy: %s | Val Loss: %s | Val Accuracy: %s",
                         train_loss,
                         train_acc,
-                        test_loss,
-                        test_acc)
+                        val_loss,
+                        val_acc)
 
             self.save_model(self.config.trained_model_path, self.model)
             logger.info("Model Saved at %s",self.config.trained_model_path)
 
-            return train_loss, train_acc, test_loss, test_acc
+            return train_loss, train_acc, val_loss, val_acc
