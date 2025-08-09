@@ -8,22 +8,22 @@ class PredictionPipeline:
     def __init__(self, filename):
         self.filename = filename
 
-    def predict(self):
+    @staticmethod
+    def predict(image):
         model = torch.load(f="model/model.pth", weights_only=False)
 
-        image = io.read_image(self.filename)
+        # image = io.read_image(self.filename)
+        labels = ["Normal", "Tumor"]
+
 
         transforms = v2.Compose([
             v2.ToImage(),
             v2.Resize(size=[224,224]),
             v2.ToDtype(dtype=torch.float32,scale=True)])
-
-        model.eval()
+        image = image.convert('RGB')
         x = transforms(image).unsqueeze(dim=0)
-        y_pred = model(x)
-        result = np.argmax(y_pred.detach().numpy(),axis=1)
-
-        if result[0] == 1:
-            return [{'image':'Tumor'}]
-        else:
-            return [{'image':'Normal'}]
+        model.eval()
+        with torch.inference_mode():
+            logits = model(x)
+            y_pred = torch.sigmoid(logits)
+            return {labels[i]:float(y_pred[0][i]) for i in range(2)}
