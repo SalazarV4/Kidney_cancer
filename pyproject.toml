@@ -5,6 +5,9 @@ description = ""
 authors = [
     {name = "SalazarV4",email = "diegosalazar.v4@gmail.com"}
 ]
+packages = [
+    { include = "kidney_cancer", from = "src" }
+]
 readme = "README.md"
 requires-python = ">=3.13,<4.0"
 dependencies = [
@@ -31,9 +34,6 @@ dependencies = [
     "gradio (>=5.42.0,<6.0.0)"
 
 ]
-
-[tool.poetry]
-packages = [{include = "kidney_cancer", from = "src"}]
 
 
 [build-system]
