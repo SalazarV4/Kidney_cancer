@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 import dagshub
 from kidney_cancer import logger
 from kidney_cancer.pipeline.data_ingestion import DataIngestionTrainingPipeline
@@ -6,7 +5,7 @@ from kidney_cancer.pipeline.base_model import BaseModelTrainingPipeline
 from kidney_cancer.pipeline.model_training import ModelTrainingPipeline
 from kidney_cancer.pipeline.model_evaluation import ModelEvaluationPipeline
 
-dagshub.init(repo_owner='SalazarV4', repo_name='Kidney_cancer', mlflow=True)
+#dagshub.init(repo_owner='SalazarV4', repo_name='Kidney_cancer', mlflow=True)
 
 STAGE_NAME_1 = "Data Ingestion"
 try:
