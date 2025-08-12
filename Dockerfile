@@ -1,16 +1,9 @@
-FROM python:3.13-slim-bullseye
+FROM python:3.13.5-slim-buster
 
-RUN apt update -y && apt install -y curl awscli && rm -rf /var/lib/apt/lists/*
-
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-ENV PATH="/root/.local/bin:$PATH"
-
+RUN apt update -y && apt install awscli -y
 WORKDIR /app
 
-COPY . .
+COPY . /app
+RUN poetry install
 
-RUN poetry install --no-interaction --no-ansi
-
-
-CMD ["poetry", "run", "python", "app.py"]
+CMD ["python", "app.py"]
