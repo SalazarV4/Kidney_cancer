@@ -1,9 +1,23 @@
 FROM python:3.13-slim-bullseye
 
-RUN apt update -y && apt install awscli -y
+# Install OS-level dependencies and awscli
+RUN apt update -y && apt install -y curl awscli && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Add poetry to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
 WORKDIR /app
 
-COPY . /app
-RUN poetry install
+# Copy dependency files first (for caching)
+COPY pyproject.toml poetry.lock ./
 
-CMD ["python", "app.py"]
+# Install Python dependencies
+RUN poetry install --no-interaction --no-ansi
+
+# Copy the rest of the project
+COPY . .
+
+CMD ["poetry", "run", "python", "app.py"]
