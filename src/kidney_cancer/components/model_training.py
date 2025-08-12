@@ -82,11 +82,10 @@ class ModelTraining:
                 y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
                 train_acc += (y_pred_class == y).sum().item()/len(y_pred)
 
-                train_loss = train_loss / len(self.train_dataloader)
-                train_acc = train_acc / len(self.train_dataloader)
+            train_loss = train_loss / len(self.train_dataloader)
+            train_acc = train_acc / len(self.train_dataloader)
 
-                if batch + 1 %10 == 0:
-                    logger.info("Training loss: %s | Train Accuracy: %s",train_loss,train_acc)
+            logger.info("Training loss: %s | Train Accuracy: %s",train_loss,train_acc)
             logger.info("Evaluating model..")
             self.model.eval()
 
