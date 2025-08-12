@@ -14,10 +14,13 @@ WORKDIR /app
 # Copy dependency files first (for caching)
 COPY pyproject.toml poetry.lock ./
 
-# Install Python dependencies
+# Copy the src directory so poetry can find your package
+COPY src ./src
+
+# Install Python dependencies, now poetry can find your package
 RUN poetry install --no-interaction --no-ansi
 
-# Copy the rest of the project
+# Copy the rest of your project files
 COPY . .
 
 CMD ["poetry", "run", "python", "app.py"]
