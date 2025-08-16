@@ -1,4 +1,5 @@
 import dagshub
+import numpy as np
 from kidney_cancer import logger
 from kidney_cancer.pipeline.data_ingestion import DataIngestionTrainingPipeline
 from kidney_cancer.pipeline.base_model import BaseModelTrainingPipeline
@@ -51,3 +52,4 @@ try:
 except Exception as e:
     logger.exception(e)
     raise e
+
